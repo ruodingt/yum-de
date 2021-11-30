@@ -1,0 +1,9 @@
+master: local[1]
+app_name: reporting.yum
+load_configs:
+  - src: "data/sample_data/line_items.ndjson"
+    dst: line_items
+  - src: "data/sample_data/orders.ndjson"
+    dst: orders
+  - src: "data/sample_data/venues.ndjson"
+    dst: venues

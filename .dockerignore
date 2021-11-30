@@ -1,0 +1,6 @@
+./k8s.yaml
+scripts/
+/*.yaml
+README.md
+SUBMISSION.md
+system.png
