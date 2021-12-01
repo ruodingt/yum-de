@@ -7,7 +7,7 @@ from pyspark.sql import SparkSession
 
 
 class ReportingEngine:
-    def __init__(self, master="local[1]", app_name="reporting.yum", load_configs=[]):
+    def __init__(self, master: str = "local[1]", app_name: str = "reporting.yum", load_configs: list = []):
         self.spark = SparkSession. \
             builder.master(master=master). \
             appName(app_name). \
@@ -20,8 +20,7 @@ class ReportingEngine:
         for load_conf in self.load_configs:
             self._load_json(src_json=load_conf['src'], dst_table=load_conf['dst'])
 
-    def _load_json(self, src_json, dst_table):
-        # "data/sample_data/line_items.ndjson"
+    def _load_json(self, src_json: str, dst_table: str):
         df = self.spark.read.json(src_json)
         df.registerTempTable(dst_table)
 
@@ -77,4 +76,9 @@ def cli(run_subcommand=True):
 
 
 if __name__ == '__main__':
+
+    # install the package and dependecies
+    # pip3 install -e .
+    # The command will init ReportingEngine and execute the sql command specified in configs/test/test_sql.yaml
+    # python3 yumr/run.py --config configs/test/test_init.yaml exec --config configs/test/test_sql.yaml
     cli(run_subcommand=True)

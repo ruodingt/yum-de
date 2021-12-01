@@ -1,0 +1,26 @@
+sql: >
+  WITH t1 AS (
+      SELECT line_items.id as item_id,
+      FIRST(line_items.name) as item,
+      SUM(line_items.quantity) as quantity,
+      SUM(line_items.total_in_cents) as total_in_cents,
+      orders.venue_id
+      FROM line_items
+      LEFT JOIN orders
+      ON line_items.order_id = orders.id
+      WHERE orders.venue_id is not NULL
+      AND line_items.updated_at >= TIMESTAMP ("2021-05-01T00:00:00.000000Z")
+      GROUP BY line_items.id, orders.venue_id, venue_id
+      ),
+  t2 AS (
+      SELECT item_id, item, quantity, total_in_cents, venue_id,
+             venues.name as venue_name,
+             venues.country as venue_country,
+             venues.timezone as venue_timezone
+      FROM t1
+      LEFT JOIN venues
+      ON t1.venue_id = venues.id
+      WHERE venues.name IS NOT NULL
+      )
+  SELECT * FROM t2 ORDER BY quantity DESC, venue_id;
+output: data/output/report_most_popular_item

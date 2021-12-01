@@ -24,6 +24,16 @@ sql: >
       LEFT JOIN venues
       ON t1.venue_id = venues.id
       WHERE venues.name IS NOT NULL
-      )
-  SELECT * FROM t2
+      ),
+  t3 AS (
+      SELECT item_id, FIRST(item) AS item, venue_id, FIRST(venue_name) AS venue_name,
+      SUM(quantity) AS quantity, SUM(total_in_cents) AS total_in_cents FROM t2
+      GROUP BY item_id, venue_id
+  ),
+  t4 AS (
+    SELECT item_id, item, venue_id, venue_name, quantity, total_in_cents,
+    RANK() OVER (PARTITION BY venue_id ORDER BY quantity DESC) AS popularity_rank
+    FROM t3
+  )
+  SELECT * FROM t4 WHERE popularity_rank = 1
 output: data/output/report_most_popular_item
